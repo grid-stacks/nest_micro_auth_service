@@ -1,42 +1,35 @@
+import { Controller, Inject } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+  LoginRequestDto,
+  RegisterRequestDto,
+  ValidateRequestDto,
+} from './dto/auth.dto';
+import {
+  AUTH_SERVICE_NAME,
+  RegisterResponse,
+  LoginResponse,
+  ValidateResponse,
+} from './auth.pb';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  @Inject(AuthService)
+  private readonly service: AuthService;
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Register')
+  private register(payload: RegisterRequestDto): Promise<RegisterResponse> {
+    return this.service.register(payload);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Login')
+  private login(payload: LoginRequestDto): Promise<LoginResponse> {
+    return this.service.login(payload);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Validate')
+  private validate(payload: ValidateRequestDto): Promise<ValidateResponse> {
+    return this.service.validate(payload);
   }
 }
