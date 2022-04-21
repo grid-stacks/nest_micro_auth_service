@@ -15,6 +15,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: '10091986',
       entities: ['dist/**/*.entity.{ts,js}'],
       synchronize: true, // never true in production!
+      // migrations: ['dist/src/db/migrations/*.js'],
+      // migrationsRun: true,
+      // cli: {
+      //   migrationsDir: 'src/db/migrations',
+      // },
     }),
     AuthModule,
   ],
